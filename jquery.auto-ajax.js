@@ -33,7 +33,7 @@
 }(function ($) {
 
   var pluginName = 'autoAjax';
-  var propName = 'data-auto-ajax';
+  var attrName = 'data-auto-ajax';
   var eventKey = 'auto-ajax';
   var events = {
     "BEFORE": "before." + eventKey,
@@ -167,13 +167,13 @@
   $.extend(Plugin.prototype, {
     init: function () {
       $(this.element)
-        .prop(propName, '')
+        .attr(attrName, '')
         .on(events.CLICK + '.' + this.elementId, 'a', $.proxy(onClickCallback, this))
         .on(events.SUBMIT + '.' + this.elementId, 'form', $.proxy(onSubmitCallback, this));
     },
     destroy: function () {
       $(this.element)
-        .removeProp(propName)
+        .removeAttr(attrName)
         .off(events.CLICK + '.' + this.elementId)
         .off(events.SUBMIT + '.' + this.elementId);
     }
@@ -189,7 +189,7 @@
 
       if (!plugin) {
         if (elementIdIsNodeId(this.id)) {
-          $(this).find('[' + propName + ']')[pluginName]('destroy');
+          $(this).find('[' + attrName + ']')[pluginName]('destroy');
           plugin = new Plugin(this, options);
           $.data(this, key, plugin);
         }
