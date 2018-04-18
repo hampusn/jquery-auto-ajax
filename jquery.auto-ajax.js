@@ -112,7 +112,7 @@
     var $element = $(instance.element);
     var form = event.target;
     var $form = $(form);
-    var formData = $form.serialize();
+    var formData = new FormData(form);
     
     // Halt execution if something seems to be wrong with element
     // or if it's been removed from the document body.
@@ -124,29 +124,31 @@
     $element.trigger(events.BEFORE, [instance]);
 
     $.ajax(form.action, {
-      data: formData,
-      method: form.method
-    }).always(function () {
-      $.ajax(instance.portletUrl + '?' + formData)
-        .done(function (data, textStatus, jqXHR) {
-          // Build new content.
-          var $newContent = $();
-          if (elementHasCommentChild(instance.element)) {
-            $newContent = $newContent.add($(instance.element.children[0]));
-          }
-          $newContent = $newContent.add($(data));
-          $element.html($newContent);
+      "data":        formData,
+      "method":      form.method,
+      "contentType": form.enctype,
+      "processData": false
+    })
+      .done(function (data, textStatus, jqXHR) {
+        data = $(data).find('#' + instance.elementId);
 
-          $element.trigger(events.DONE, [instance, event, data, textStatus, jqXHR]);
-        })
-        .fail(function (jqXHR, textStatus, errorThrown) {
-          $element.trigger(events.FAIL, [instance, event, jqXHR, textStatus, errorThrown]);
-        })
-        .always(function (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
-          $element.removeClass(instance.options.loadingClass);
-          $element.trigger(events.ALWAYS, [instance, event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
-        });
-    });
+        // Build new content.
+        var $newContent = $();
+        if (elementHasCommentChild(instance.element)) {
+          $newContent = $newContent.add($(instance.element.children[0]));
+        }
+        $newContent = $newContent.add(data);
+        $element.html($newContent);
+
+        $element.trigger(events.DONE, [instance, event, data, textStatus, jqXHR]);
+      })
+      .fail(function (jqXHR, textStatus, errorThrown) {
+        $element.trigger(events.FAIL, [instance, event, jqXHR, textStatus, errorThrown]);
+      })
+      .always(function (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
+        $element.removeClass(instance.options.loadingClass);
+        $element.trigger(events.ALWAYS, [instance, event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
+      });
 
     event.preventDefault();
   }
