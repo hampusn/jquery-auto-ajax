@@ -77,6 +77,10 @@
     if (!instance.element || !document.body.contains(instance.element)) {
       return;
     }
+    // Ignore callback when matching exclude selector.
+    if (this.options.exclude && $(link).is(this.options.exclude)) {
+      return true;
+    }
 
     $element.addClass(instance.options.loadingClass);
     $element.trigger(events.BEFORE, [instance]);
@@ -118,6 +122,10 @@
     // or if it's been removed from the document body.
     if (!this.element || !document.body.contains(this.element)) {
       return;
+    }
+    // Ignore callback when matching exclude selector.
+    if (this.options.exclude && $form.is(this.options.exclude)) {
+      return true;
     }
 
     $element.addClass(instance.options.loadingClass);
@@ -204,7 +212,8 @@
 
   $.fn[pluginName].defaults = {
     "loadingClass": "auto-ajax--loading",
-    "pageId":       sv.PageContext.pageId
+    "pageId":       sv.PageContext.pageId,
+    "exclude":      ""
   };
 
 }));
