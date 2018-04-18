@@ -83,7 +83,7 @@
     }
 
     $element.addClass(instance.options.loadingClass);
-    $element.trigger(events.BEFORE, [instance]);
+    $element.trigger(events.BEFORE, [instance, event]);
 
     $.ajax(link.href)
       .always(function () {
