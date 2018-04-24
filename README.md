@@ -20,10 +20,10 @@ Manual refresh of portlet is possible through the `refresh` command. This might 
 $('.sv-random-portlet').autoAjax('refresh');
 
 // Add auto ajax to bookmark portlet and make sure all bookmark lists are updated whenever the bookmark portlet is being used.
-$svjq('.sv-crdbookmark2-portlet')
+$('.sv-crdbookmark2-portlet')
   .autoAjax()
   .on('done.auto-ajax', function () {
-    $svjq('.sv-listbookmark2-portlet').autoAjax('refresh');
+    $('.sv-listbookmark2-portlet').autoAjax('refresh');
   });
 ```
 
