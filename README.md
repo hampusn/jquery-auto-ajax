@@ -2,7 +2,12 @@ Auto Ajax
 =========
 
 Tries to automatically do ajax requests for links (`click`) and forms (`submit`) in a SiteVision module.
+
+## Basic usage
+
 Target can be anything with a valid `svid` as html ID.
+
+### Options
 
 ```js
 $('.sv-random-portlet').autoAjax({
@@ -10,8 +15,9 @@ $('.sv-random-portlet').autoAjax({
   "pageId":       sv.PageContext.pageId, // The current page's identifier.
   "exclude":      "" // Selector which the element will be matched against. If a match occur, no ajax request will be made.
 });
-
 ```
+
+### Manually refreshing element
 
 Manual refresh of portlet is possible through the `refresh` command. This might be useful if one would want to refresh related portlets when the main portlet is updated. For instance, you could refresh all `sv-listbookmark2-portlet` when the `sv-crdbookmark2-portlet` is used so the bookmark list portlets are up to date.
 
@@ -28,6 +34,8 @@ $('.sv-crdbookmark2-portlet')
 ```
 
 > **Warning!** Refreshing the instance inside a callback attached to the same instance will result in an infinite loop of ajax requests.
+
+### Remove plugin from element
 
 Removal of plugin is done through the `destroy` command. This will remove attributes, events and custom data attached by this plugin. If you handle events or data that needs to be cleaned, do so before using this command.
 
