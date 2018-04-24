@@ -31,7 +31,8 @@
     factory(jQuery);
   }
 }(function ($) {
-
+  // Actual library code
+  
   var pluginName = 'autoAjax';
   var attrName = 'data-auto-ajax';
   var eventKey = 'auto-ajax';
@@ -44,14 +45,40 @@
     "SUBMIT": "submit." + eventKey
   };
 
+  /**
+   * Convert a html id into a SiteVision node identifier.
+   * 
+   * @param  {String} elementId The html id.
+   * @return {String}
+   */
   function getNodeIdFromElementId (elementId) {
     return elementId.replace('svid', '').replace('_', '.');
   }
 
+  /**
+   * Returns true if html id seems to be a SiteVision node identifier.
+   * 
+   * @param  {String} elementId The html id.
+   * @return {Boolean}
+   */
   function elementIdIsNodeId (elementId) {
     return elementId.indexOf('svid') === 0;
   }
 
+  /**
+   * Checks if the html element's first child is your typical 
+   * SiteVision portlet's div with name of portlet as comment.
+   * 
+   * For example:
+   *
+   * <div class="sv-form-portlet">
+   *   <div id="Epostformular"><!-- E-postformulär --></div>
+   *   ...
+   * </div>
+   * 
+   * @param  {HTMLElement} element The html element to check.
+   * @return {Boolean}
+   */
   function elementHasCommentChild (element) {
     var firstChild = element.children[0];
     if (firstChild && firstChild.firstChild && firstChild.firstChild.nodeType === Node.COMMENT_NODE) {
@@ -60,13 +87,30 @@
     return false;
   }
 
+  /**
+   * Builds a portlet url which can be used to only get 
+   * the portlet's markup/html.
+   * 
+   * @param  {String} pageId The page's node identifier.
+   * @param  {String} nodeId The portlet's node identifier.
+   * @return {String}
+   */
   function getPortletUrl (pageId, nodeId) {
     if (pageId && nodeId) {
       return '/' + pageId + '/' + nodeId + '.portlet';
     }
-    return false;
+    return '';
   }
 
+  /**
+   * Done callback for ajax request.
+   * Handles the replacement of content.
+   * 
+   * @param  {String} data       The new html of the portlet.
+   * @param  {String} textStatus
+   * @param  {Object} jqXHR
+   * @return {Void}
+   */
   function doneCallback (data, textStatus, jqXHR) {
     var instance = this.instance;
     var $element = $(instance.element);
@@ -81,11 +125,27 @@
     $element.trigger(events.DONE, [instance, this.event, data, textStatus, jqXHR]);
   }
 
+  /**
+   * Fail callback for the ajax request.
+   * 
+   * @param  {Object} jqXHR
+   * @param  {String} textStatus
+   * @param  {String} errorThrown The error message.
+   * @return {Void}
+   */
   function failCallback (jqXHR, textStatus, errorThrown) {
     var instance = this.instance;
     $(instance.element).trigger(events.FAIL, [instance, this.event, jqXHR, textStatus, errorThrown]);
   }
 
+  /**
+   * Always callback for the ajax request.
+   * 
+   * @param  {String|Object} dataOrJqXHR
+   * @param  {String}        textStatus
+   * @param  {Object|String} jqXHROrErrorThrown
+   * @return {Void}
+   */
   function alwaysCallback (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
     var instance = this.instance;
     var $element = $(instance.element);
@@ -93,8 +153,14 @@
     $element.trigger(events.ALWAYS, [instance, this.event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
   }
 
+  /**
+   * Click callback.
+   * 
+   * @param  {Object} event
+   * @return {Boolean|Void}
+   */
   function onClickCallback (event) {
-    var link = event.target;
+    var link     = event.target;
     var instance = this;
     var $element = $(instance.element);
 
@@ -127,11 +193,17 @@
     event.preventDefault();
   }
 
+  /**
+   * Submit callback.
+   * 
+   * @param  {Object} event
+   * @return {Boolean|Void}
+   */
   function onSubmitCallback (event) {
     var instance = this;
     var $element = $(instance.element);
-    var form = event.target;
-    var $form = $(form);
+    var form     = event.target;
+    var $form    = $(form);
     var formData = new FormData(form);
     
     // Halt execution if something seems to be wrong with element
@@ -167,7 +239,12 @@
     event.preventDefault();
   }
 
-  // The actual plugin constructor
+  /**
+   * Plugin constructor
+   * 
+   * @param {HTMLElement} element
+   * @param {Object}      options
+   */
   function Plugin (element, options) {
     this.element    = element;
     this.options    = $.extend(true, {}, $.fn[pluginName].defaults, options);
@@ -177,7 +254,10 @@
     this.portletId  = getNodeIdFromElementId(this.elementId);
     this.portletUrl = getPortletUrl(this.options.pageId, this.portletId);
 
-    this.init();
+    // Portlet URL is required for this plugin to work.
+    if (this.portletUrl) {
+      this.init();
+    }
   }
 
   $.extend(Plugin.prototype, {
@@ -216,6 +296,11 @@
     });
   };
 
+  /**
+   * Plugin defaults
+   * 
+   * @type {Object}
+   */
   $.fn[pluginName].defaults = {
     "loadingClass": "auto-ajax--loading",
     "pageId":       sv.PageContext.pageId,
