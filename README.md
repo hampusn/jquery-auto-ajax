@@ -31,6 +31,23 @@ $('.sv-crdbookmark2-portlet')
   .on('done.auto-ajax', function () {
     $('.sv-listbookmark2-portlet').autoAjax('refresh');
   });
+
+// One might even want to let both portlets refresh each other. If that's the case, you should make sure that you never refresh the other portlet if the current portlet was being manually refreshed to begin with. That could create an infinite loop which is usually bad. This could be achieved by checked the `type` property of the `originalEvent`. When using the manual refresh, a dummy event named "refresh" is created since no original event existed in the first place.
+$('.sv-listbookmark2-portlet')
+  .autoAjax({"exclude": ":not([href*='removeBookmark'])"})
+  .on('done.auto-ajax', function (event, instance, originalEvent) {
+    if (originalEvent.type !== "refresh") {
+      $('.sv-crdbookmark2-portlet').autoAjax('refresh');
+    }
+  });
+$('.sv-crdbookmark2-portlet')
+  .autoAjax()
+  .on('done.auto-ajax', function (event, instance, originalEvent) {
+    if (originalEvent.type !== "refresh") {
+      $('.sv-listbookmark2-portlet').autoAjax('refresh');
+    }
+  });
+
 ```
 
 > **Warning!** Refreshing the instance inside a callback attached to the same instance will result in an infinite loop of ajax requests.
