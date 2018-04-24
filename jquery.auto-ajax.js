@@ -67,6 +67,32 @@
     return false;
   }
 
+  function doneCallback (data, textStatus, jqXHR) {
+    var instance = this.instance;
+    var $element = $(instance.element);
+    // Build new content.
+    var $newContent = $();
+    if (elementHasCommentChild(instance.element)) {
+      $newContent = $newContent.add($(instance.element.children[0]));
+    }
+    $newContent = $newContent.add($(data));
+    $element.html($newContent);
+    
+    $element.trigger(events.DONE, [instance, this.event, data, textStatus, jqXHR]);
+  }
+
+  function failCallback (jqXHR, textStatus, errorThrown) {
+    var instance = this.instance;
+    $(instance.element).trigger(events.FAIL, [instance, this.event, jqXHR, textStatus, errorThrown]);
+  }
+
+  function alwaysCallback (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
+    var instance = this.instance;
+    var $element = $(instance.element);
+    $element.removeClass(instance.options.loadingClass);
+    $element.trigger(events.ALWAYS, [instance, this.event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
+  }
+
   function onClickCallback (event) {
     var link = event.target;
     var instance = this;
@@ -87,25 +113,15 @@
 
     $.ajax(link.href)
       .always(function () {
-        $.ajax(instance.portletUrl)
-          .done(function (data, textStatus, jqXHR) {
-            // Build new content.
-            var $newContent = $();
-            if (elementHasCommentChild(instance.element)) {
-              $newContent = $newContent.add($(instance.element.children[0]));
-            }
-            $newContent = $newContent.add($(data));
-            $(instance.element).html($newContent);
-            
-            $element.trigger(events.DONE, [instance, event, data, textStatus, jqXHR]);
-          })
-          .fail(function (jqXHR, textStatus, errorThrown) {
-            $element.trigger(events.FAIL, [instance, event, jqXHR, textStatus, errorThrown]);
-          })
-          .always(function (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
-            $element.removeClass(instance.options.loadingClass);
-            $element.trigger(events.ALWAYS, [instance, event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
-          });
+        $.ajax(instance.portletUrl, {
+          "context": {
+            "instance": instance,
+            "event":    event
+          }
+        })
+          .done(doneCallback)
+          .fail(failCallback)
+          .always(alwaysCallback);
       });
 
     event.preventDefault();
@@ -135,28 +151,18 @@
       "data":        formData,
       "method":      form.method,
       "contentType": form.enctype,
-      "processData": false
+      "processData": false,
+      "context": {
+        "instance": instance,
+        "event":    event
+      },
+      dataFilter: function (data, type) {
+        return $(data).find('#' + instance.elementId).get(0).outerHTML;
+      }
     })
-      .done(function (data, textStatus, jqXHR) {
-        data = $(data).find('#' + instance.elementId);
-
-        // Build new content.
-        var $newContent = $();
-        if (elementHasCommentChild(instance.element)) {
-          $newContent = $newContent.add($(instance.element.children[0]));
-        }
-        $newContent = $newContent.add(data);
-        $element.html($newContent);
-
-        $element.trigger(events.DONE, [instance, event, data, textStatus, jqXHR]);
-      })
-      .fail(function (jqXHR, textStatus, errorThrown) {
-        $element.trigger(events.FAIL, [instance, event, jqXHR, textStatus, errorThrown]);
-      })
-      .always(function (dataOrJqXHR, textStatus, jqXHROrErrorThrown) {
-        $element.removeClass(instance.options.loadingClass);
-        $element.trigger(events.ALWAYS, [instance, event, dataOrJqXHR, textStatus, jqXHROrErrorThrown]);
-      });
+      .done(doneCallback)
+      .fail(failCallback)
+      .always(alwaysCallback);
 
     event.preventDefault();
   }
