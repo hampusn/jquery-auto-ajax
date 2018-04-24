@@ -27,6 +27,8 @@ $('.sv-crdbookmark2-portlet')
   });
 ```
 
+> **Warning!** Refreshing the instance inside a callback attached to the same instance will result in an infinite loop of ajax requests.
+
 Removal of plugin is done through the `destroy` command. This will remove attributes, events and custom data attached by this plugin. If you handle events or data that needs to be cleaned, do so before using this command.
 
 ```js
