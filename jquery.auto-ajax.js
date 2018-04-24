@@ -174,20 +174,9 @@
       return true;
     }
 
-    $element.addClass(instance.options.loadingClass);
-    $element.trigger(events.BEFORE, [instance, event]);
-
     $.ajax(link.href)
       .always(function () {
-        $.ajax(instance.portletUrl, {
-          "context": {
-            "instance": instance,
-            "event":    event
-          }
-        })
-          .done(doneCallback)
-          .fail(failCallback)
-          .always(alwaysCallback);
+        instance.refresh(event);
       });
 
     event.preventDefault();
@@ -272,6 +261,23 @@
         .removeAttr(attrName)
         .off(events.CLICK + '.' + this.elementId)
         .off(events.SUBMIT + '.' + this.elementId);
+    },
+    refresh: function (event) {
+      event = event || $svjq.Event('refresh');
+
+      $(this.element)
+        .addClass(this.options.loadingClass)
+        .trigger(events.BEFORE, [this, event]);
+
+      $.ajax(this.portletUrl, {
+        "context": {
+          "instance": this,
+          "event":    event
+        }
+      })
+        .done(doneCallback)
+        .fail(failCallback)
+        .always(alwaysCallback);
     }
   });
 
@@ -292,6 +298,8 @@
       } else if (options === 'destroy') {
         plugin.destroy();
         $.removeData(this, key);
+      } else if (options === 'refresh') {
+        plugin.refresh();
       }
     });
   };
