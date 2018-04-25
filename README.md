@@ -22,17 +22,30 @@ $('.sv-random-portlet').autoAjax({
 Manual refresh of portlet is possible through the `refresh` command. This might be useful if one would want to refresh related portlets when the main portlet is updated. For instance, you could refresh all `sv-listbookmark2-portlet` when the `sv-crdbookmark2-portlet` is used so the bookmark list portlets are up to date.
 
 ```js
-// Update/refresh a random SiteVision portlet.
+// EXAMPLE 1: Update/refresh a random SiteVision portlet.
 $('.sv-random-portlet').autoAjax('refresh');
 
-// Add auto ajax to bookmark portlet and make sure all bookmark lists are updated whenever the bookmark portlet is being used.
+
+// EXAMPLE 2: Update portlet when another portlet's autoAjax is used
+//
+// Add auto ajax to bookmark portlet and make sure all bookmark lists
+// are updated whenever the bookmark portlet is being used.
 $('.sv-crdbookmark2-portlet')
   .autoAjax()
   .on('done.auto-ajax', function () {
     $('.sv-listbookmark2-portlet').autoAjax('refresh');
   });
 
-// One might even want to let both portlets refresh each other. If that's the case, you should make sure that you never refresh the other portlet if the current portlet was being manually refreshed to begin with. That could create an infinite loop which is usually bad. This could be achieved by checked the `type` property of the `originalEvent`. When using the manual refresh, a dummy event named "refresh" is created since no original event existed in the first place.
+
+// EXAMPLE 3: Bidirectional sync
+//
+// One might even want to let both portlets refresh each other.
+// If that's the case, you should make sure that you never refresh the other portlet
+// if the current portlet was being manually refreshed to begin with.
+// That could create an infinite loop which is usually bad.
+// This could be achieved by checked the `type` property of the `originalEvent`.
+// When using the manual refresh, a dummy event named "refresh" is created
+// since no original event existed in the first place.
 $('.sv-listbookmark2-portlet')
   .autoAjax({"exclude": ":not([href*='removeBookmark'])"})
   .on('done.auto-ajax', function (event, instance, originalEvent) {
