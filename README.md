@@ -17,6 +17,8 @@ $('.sv-random-portlet').autoAjax({
 });
 ```
 
+> **Hint!** If you'd like to only _include_ a selector instead of _excluding_ all other you could use exclude with double negation. For instance, using the selector `":not([href*='removeBookmark'])"` in the `exclude` option would make sure to exclude all items whose href attribute _does not_ contain the string `"removeBookmark"`.
+
 ### Manually refreshing element
 
 Manual refresh of portlet is possible through the `refresh` command. This might be useful if one would want to refresh related portlets when the main portlet is updated. For instance, you could refresh all `sv-listbookmark2-portlet` when the `sv-crdbookmark2-portlet` is used so the bookmark list portlets are up to date.
