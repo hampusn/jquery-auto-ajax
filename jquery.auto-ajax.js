@@ -32,7 +32,7 @@
   }
 }(function ($) {
   // Actual library code
-  
+
   var pluginName = 'autoAjax';
   var attrName = 'data-auto-ajax';
   var eventKey = 'auto-ajax';
@@ -47,7 +47,7 @@
 
   /**
    * Convert a html id into a SiteVision node identifier.
-   * 
+   *
    * @param  {String} elementId The html id.
    * @return {String}
    */
@@ -57,7 +57,7 @@
 
   /**
    * Returns true if html id seems to be a SiteVision node identifier.
-   * 
+   *
    * @param  {String} elementId The html id.
    * @return {Boolean}
    */
@@ -66,16 +66,16 @@
   }
 
   /**
-   * Checks if the html element's first child is your typical 
+   * Checks if the html element's first child is your typical
    * SiteVision portlet's div with name of portlet as comment.
-   * 
+   *
    * For example:
    *
    * <div class="sv-form-portlet">
    *   <div id="Epostformular"><!-- E-postformulär --></div>
    *   ...
    * </div>
-   * 
+   *
    * @param  {HTMLElement} element The html element to check.
    * @return {Boolean}
    */
@@ -88,9 +88,9 @@
   }
 
   /**
-   * Builds a portlet url which can be used to only get 
+   * Builds a portlet url which can be used to only get
    * the portlet's markup/html.
-   * 
+   *
    * @param  {String} pageId The page's node identifier.
    * @param  {String} nodeId The portlet's node identifier.
    * @return {String}
@@ -105,7 +105,7 @@
   /**
    * Done callback for ajax request.
    * Handles the replacement of content.
-   * 
+   *
    * @param  {String} data       The new html of the portlet.
    * @param  {String} textStatus
    * @param  {Object} jqXHR
@@ -121,13 +121,13 @@
     }
     $newContent = $newContent.add($(data));
     $element.html($newContent);
-    
+
     $element.trigger(events.DONE, [instance, this.event, data, textStatus, jqXHR]);
   }
 
   /**
    * Fail callback for the ajax request.
-   * 
+   *
    * @param  {Object} jqXHR
    * @param  {String} textStatus
    * @param  {String} errorThrown The error message.
@@ -140,7 +140,7 @@
 
   /**
    * Always callback for the ajax request.
-   * 
+   *
    * @param  {String|Object} dataOrJqXHR
    * @param  {String}        textStatus
    * @param  {Object|String} jqXHROrErrorThrown
@@ -155,14 +155,13 @@
 
   /**
    * Click callback.
-   * 
+   *
    * @param  {Object} event
    * @return {Boolean|Void}
    */
   function onClickCallback (event) {
     var link     = event.target;
     var instance = this;
-    var $element = $(instance.element);
 
     // Halt execution if something seems to be wrong with element
     // or if it's been removed from the document body.
@@ -184,7 +183,7 @@
 
   /**
    * Submit callback.
-   * 
+   *
    * @param  {Object} event
    * @return {Boolean|Void}
    */
@@ -193,8 +192,7 @@
     var $element = $(instance.element);
     var form     = event.target;
     var $form    = $(form);
-    var formData = new FormData(form);
-    
+
     // Halt execution if something seems to be wrong with element
     // or if it's been removed from the document body.
     if (!this.element || !document.body.contains(this.element)) {
@@ -209,15 +207,15 @@
     $element.trigger(events.BEFORE, [instance]);
 
     $.ajax(form.action, {
-      "data":        formData,
+      "data":        form.method === 'post' ? new FormData(form) : $form.serialize(),
       "method":      form.method,
       "contentType": form.enctype,
-      "processData": false,
+      "processData": form.method === 'post' ? false : true,
       "context": {
         "instance": instance,
         "event":    event
       },
-      dataFilter: function (data, type) {
+      dataFilter: function (data) {
         return $(data).find('#' + instance.elementId).get(0).outerHTML;
       }
     })
@@ -230,7 +228,7 @@
 
   /**
    * Plugin constructor
-   * 
+   *
    * @param {HTMLElement} element
    * @param {Object}      options
    */
@@ -306,7 +304,7 @@
 
   /**
    * Plugin defaults
-   * 
+   *
    * @type {Object}
    */
   $.fn[pluginName].defaults = {
