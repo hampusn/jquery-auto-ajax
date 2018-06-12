@@ -38,6 +38,7 @@
   var eventKey = 'auto-ajax';
   var events = {
     "BEFORE": "before." + eventKey,
+    "INIT":   "init." + eventKey,
     "DONE":   "done." + eventKey,
     "FAIL":   "fail." + eventKey,
     "ALWAYS": "always." + eventKey,
@@ -252,7 +253,8 @@
       $(this.element)
         .attr(attrName, '')
         .on(events.CLICK + '.' + this.elementId, 'a', $.proxy(onClickCallback, this))
-        .on(events.SUBMIT + '.' + this.elementId, 'form', $.proxy(onSubmitCallback, this));
+        .on(events.SUBMIT + '.' + this.elementId, 'form', $.proxy(onSubmitCallback, this))
+        .trigger(events.INIT, [this]);
     },
     destroy: function () {
       $(this.element)
