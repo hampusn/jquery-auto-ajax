@@ -174,10 +174,29 @@
       return true;
     }
 
-    $.ajax(link.href)
-      .always(function () {
-        instance.refresh(event);
-      });
+    if (this.options.actionLinks) {
+      $.ajax(link.href)
+        .always(function () {
+          instance.refresh(event);
+        });
+    } else {
+      $(instance.element)
+        .addClass(instance.options.loadingClass)
+        .trigger(events.BEFORE, [instance]);
+
+      $.ajax(link.href, {
+        "context": {
+          "instance": instance,
+          "event":    event
+        },
+        dataFilter: function (data) {
+          return $(data).find('#' + instance.elementId).get(0).innerHTML;
+        }
+      })
+        .done(doneCallback)
+        .fail(failCallback)
+        .always(alwaysCallback);
+    }
 
     event.preventDefault();
   }
@@ -312,7 +331,8 @@
   $.fn[pluginName].defaults = {
     "loadingClass": "auto-ajax--loading",
     "pageId":       sv.PageContext.pageId,
-    "exclude":      ""
+    "exclude":      "",
+    "actionLinks":  true
   };
 
 }));
