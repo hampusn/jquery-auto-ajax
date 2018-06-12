@@ -45,7 +45,7 @@ $('.sv-crdbookmark2-portlet')
 // If that's the case, you should make sure that you never refresh the other portlet
 // if the current portlet was being manually refreshed to begin with.
 // That could create an infinite loop which is usually bad.
-// This could be achieved by checked the `type` property of the `originalEvent`.
+// This could be achieved by checking the `type` property of the `originalEvent`.
 // When using the manual refresh, a dummy event named "refresh" is created
 // since no original event existed in the first place.
 $('.sv-listbookmark2-portlet')
