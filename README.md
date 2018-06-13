@@ -13,7 +13,8 @@ Target can be anything with a valid `svid` as html ID.
 $('.sv-random-portlet').autoAjax({
   "loadingClass": "auto-ajax--loading", // Style class added to the element before the ajax call is fired and removed afterwards.
   "pageId":       sv.PageContext.pageId, // The current page's identifier.
-  "exclude":      "" // Selector which the element will be matched against. If a match occur, no ajax request will be made.
+  "exclude":      "", // Selector which the element will be matched against. If a match occur, no ajax request will be made.
+  "actionLinks":  true // Boolean. Using action links will make link clicks similar to form submits. An ajax request will be made to the link URL, and after it's finished, the portlet will be refreshed. Useful for portlets such as the Add/Remove favourite.
 });
 ```
 
@@ -77,12 +78,13 @@ $('.sv-random-portlet').autoAjax('destroy');
 
 ## Events
 
-The `before` event is fired just before the ajax call. `done`, `fail` and `always` are the usual jqXHR callbacks for the ajax call.
+The `init` event is fired after all initialization is done and the `before` event is fired just before the ajax call. `done`, `fail` and `always` are the usual jqXHR callbacks for the ajax call.
 
 `instance` is the plugin object and `originalEvent` is the event for the link click or form submit.
 
 
 ```js
+$('.sv-random-portlet').on('init.auto-ajax', function (event, instance) {});
 $('.sv-random-portlet').on('before.auto-ajax', function (event, instance, originalEvent) {});
 $('.sv-random-portlet').on('done.auto-ajax', function (event, instance, originalEvent, data, textStatus, jqXHR) {});
 $('.sv-random-portlet').on('fail.auto-ajax', function (event, instance, originalEvent, jqXHR, textStatus, errorThrown) {});
