@@ -47,6 +47,23 @@
   };
 
   /**
+   * Get an options object for an element.
+   * 
+   * @param  {Object}      options The passed/incoming options.
+   * @param  {HTMLElement} element The html element.
+   * @return {Object}
+   */
+  function getInstanceOptions (options, element) {
+    var opts = $.extend(true, {}, $.fn[pluginName].defaults, options);
+
+    if (!opts.pageId && sv && sv.PageContext && sv.PageContext.pageId) {
+      opts.pageId = sv.PageContext.pageId;
+    }
+
+    return opts;
+  }
+
+  /**
    * Convert a html id into a SiteVision node identifier.
    *
    * @param  {String} elementId The html id.
@@ -254,7 +271,7 @@
    */
   function Plugin (element, options) {
     this.element    = element;
-    this.options    = $.extend(true, {}, $.fn[pluginName].defaults, options);
+    this.options    = getInstanceOptions(element, options);
     this._name      = pluginName;
 
     this.elementId  = this.element.id;
@@ -330,7 +347,7 @@
    */
   $.fn[pluginName].defaults = {
     "loadingClass": "auto-ajax--loading",
-    "pageId":       sv.PageContext.pageId,
+    "pageId":       (sv && sv.PageContext) ? sv.PageContext.pageId : "",
     "exclude":      "",
     "actionLinks":  true
   };
