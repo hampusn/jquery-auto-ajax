@@ -161,7 +161,7 @@
    * @return {Boolean|Void}
    */
   function onClickCallback (event) {
-    var link     = event.target;
+    var link     = event.currentTarget;
     var instance = this;
 
     // Halt execution if something seems to be wrong with element
