@@ -199,7 +199,7 @@
     } else {
       $(instance.element)
         .addClass(instance.options.loadingClass)
-        .trigger(events.BEFORE, [instance]);
+        .trigger(events.BEFORE, [instance, event]);
 
       $.ajax(link.href, {
         "context": {
@@ -241,7 +241,7 @@
     }
 
     $element.addClass(instance.options.loadingClass);
-    $element.trigger(events.BEFORE, [instance]);
+    $element.trigger(events.BEFORE, [instance, event]);
 
     $.ajax(form.action, {
       "data":        form.method === 'post' ? new FormData(form) : $form.serialize(),
