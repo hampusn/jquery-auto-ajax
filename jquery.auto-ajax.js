@@ -1,8 +1,9 @@
 /**
- * Auto Ajax
- *
+ * @file jQuery plugin for "ajaxifying" functions in SiteVision.
  * @author Hampus Nordin <nordin.hampus@gmail.com>
- */
+ * @copyright Hampus Nordin 2018
+ * @license MIT
+ * /
 /* global sv, define, module, jQuery, require */
 (function (factory) {
   if (typeof define === 'function' && define.amd) {
