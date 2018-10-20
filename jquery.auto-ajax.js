@@ -50,11 +50,11 @@
   /**
    * Get an options object for an element.
    * 
-   * @param  {Object}      options The passed/incoming options.
    * @param  {HTMLElement} element The html element.
+   * @param  {Object}      options The passed/incoming options.
    * @return {Object}
    */
-  function getInstanceOptions (options, element) {
+  function getInstanceOptions (element, options) {
     var opts = $.extend(true, {}, $.fn[pluginName].defaults, options);
 
     if (!opts.pageId && sv && sv.PageContext && sv.PageContext.pageId) {
