@@ -34,6 +34,7 @@
 }(function ($) {
   // Actual library code
 
+  var root = this;
   var pluginName = 'autoAjax';
   var attrName = 'data-auto-ajax';
   var eventKey = 'auto-ajax';
@@ -57,8 +58,8 @@
   function getInstanceOptions (element, options) {
     var opts = $.extend(true, {}, $.fn[pluginName].defaults, options);
 
-    if (!opts.pageId && sv && sv.PageContext && sv.PageContext.pageId) {
-      opts.pageId = sv.PageContext.pageId;
+    if (!opts.pageId && root.sv && root.sv.PageContext && root.sv.PageContext.pageId) {
+      opts.pageId = root.sv.PageContext.pageId;
     }
 
     return opts;
@@ -348,7 +349,7 @@
    */
   $.fn[pluginName].defaults = {
     "loadingClass": "auto-ajax--loading",
-    "pageId":       (sv && sv.PageContext) ? sv.PageContext.pageId : "",
+    "pageId":       (root.sv && root.sv.PageContext) ? root.sv.PageContext.pageId : "",
     "exclude":      "",
     "actionLinks":  true
   };
